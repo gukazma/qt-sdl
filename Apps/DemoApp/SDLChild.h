@@ -1,20 +1,17 @@
-#ifndef _MAIN_WINDOW_H
-#define _MAIN_WINDOW_H
+#ifndef _SDL_CHILD_H
+#define _SDL_CHILD_H
 
-#include <qmainwindow.h>
+#include <qmdisubwindow.h>
 #include <qwidget.h>
 #include <qtimer.h>
+#include <qgridlayout.h>
 #include <SDL.h>
 
-/*
-	This is an old example of setting up the SDL rendering context to be the MainWindow
-	itself. Simply replace the MdiWindow reference in Program.cpp with MainWindow.
-*/
-class MainWindow : public QMainWindow {
-Q_OBJECT
+class SDLChild : public QMdiSubWindow {
+	Q_OBJECT
 public:
-	MainWindow();
-	~MainWindow();
+	SDLChild(QWidget * parent);
+	~SDLChild();
 
 	void SDLInit();
 	void SetWindow(SDL_Window * ref);

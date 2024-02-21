@@ -1,18 +1,22 @@
-#include "MainWindow.h"
+#include "SDLChild.h"
 
-MainWindow::MainWindow() : MainWindowWidget(new QWidget) {
-	setWindowTitle("QMainWindow SDL Rendering Example");
-	setCentralWidget(MainWindowWidget);	// Basic setup, ensuring that the window has a widget
-	setBaseSize(640, 480);				// inside of it that we can render to
-	resize(640, 480);
+SDLChild::SDLChild(QWidget * parent) : QMdiSubWindow(parent) {
+	/*
+		If you do not set an inner widget, the SubWindow itself IS
+		a widget, so SDL renders over it... AND its controls. Not
+		quite the desired behavior, unless you want to hide the
+		controls until mouse over. But once the mouse is over, SDL
+		writes over the controls again. Keep this in mind.
+	*/
+	setWidget(new QWidget);
 
 	/*
-		I used a timer for animation rendering.
-		I tried using update() and repaint() as the slot, but this had
-		no effect. I later tried calling update/repaint from within the
-		Render() slot, and this caused a flicker. The only thing that I
-		can assume is that after the paintEvent override, qt paints the
-		grey backgrounds.
+	I used a timer for animation rendering.
+	I tried using update() and repaint() as the slot, but this had
+	no effect. I later tried calling update/repaint from within the
+	Render() slot, and this caused a flicker. The only thing that I
+	can assume is that after the paintEvent override, qt paints the
+	grey backgrounds.
 	*/
 	Time = new QTimer(this);
 	connect(Time, SIGNAL(timeout()), this, SLOT(Render()));
@@ -24,7 +28,7 @@ MainWindow::MainWindow() : MainWindowWidget(new QWidget) {
 	dir = 1;
 }
 
-MainWindow::~MainWindow() {
+SDLChild::~SDLChild() {
 	SDL_DestroyRenderer(RendererRef);	// Basic SDL garbage collection
 	SDL_DestroyWindow(WindowRef);
 
@@ -35,18 +39,18 @@ MainWindow::~MainWindow() {
 	Time = 0;
 }
 
-void MainWindow::SDLInit() {
+void SDLChild::SDLInit() {
 	/*
 		In order to do rendering, I need to save the window and renderer contexts
 		of this window.
 		I use SDL_CreateWindowFrom and pass it the winId() of the widget I wish to
-		render to. In this case, I want to render to the main central widget.
+		render to. In this case, I want to render to a widget that I added.
 	*/
-	SetWindow(SDL_CreateWindowFrom((void *)centralWidget()->winId()));
+	SetWindow(SDL_CreateWindowFrom((void *)widget()->winId()));
 	SetRenderer(SDL_CreateRenderer(GetWindow(), -1, SDL_RENDERER_ACCELERATED));
 }
 
-void MainWindow::Render() {
+void SDLChild::Render() {
 	// Basic square bouncing animation
 	SDL_Rect spos;
 	spos.h = 100;
@@ -71,18 +75,18 @@ void MainWindow::Render() {
 		position -= 5;
 }
 
-void MainWindow::SetWindow(SDL_Window * ref) {
+void SDLChild::SetWindow(SDL_Window * ref) {
 	WindowRef = ref;
 }
 
-void MainWindow::SetRenderer(SDL_Renderer * ref) {
+void SDLChild::SetRenderer(SDL_Renderer * ref) {
 	RendererRef = ref;
 }
 
-SDL_Window * MainWindow::GetWindow() {
+SDL_Window * SDLChild::GetWindow() {
 	return WindowRef;
 }
 
-SDL_Renderer * MainWindow::GetRenderer() {
+SDL_Renderer * SDLChild::GetRenderer() {
 	return RendererRef;
 }

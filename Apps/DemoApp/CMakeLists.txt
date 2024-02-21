@@ -1,6 +1,13 @@
 set(TARGET_NAME DemoApp)
 
 find_package(Qt5 COMPONENTS Core Widgets Gui OpenGL REQUIRED)
+find_package(SDL2 REQUIRED CONFIG)
+find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(glm REQUIRED)
+find_package(PNG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
+
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -24,6 +31,12 @@ Qt5::Core
 Qt5::Gui
 Qt5::Widgets
 Qt5::OpenGL
+SDL2::SDL2main
+SDL2::SDL2-static
+GLEW::GLEW
+glm::glm
+PNG::PNG
+nlohmann_json::nlohmann_json
 )
 
 if(MSVC)
